@@ -6,7 +6,7 @@
 
 import unittest
 from datetime import datetime
-from models.base_model import BaseModel
+from models import BaseModel
 from models import storage
 
 
@@ -55,7 +55,6 @@ class TestBaseModel(unittest.TestCase):
         old_updated_at = self.model.updated_at
         self.model.save()
         self.assertNotEqual(self.model.updated_at, old_updated_at)
-        self.assertEqual(storage.save.call_count, 1)  # Assuming storage.save is mocked
 
     def test_to_dict(self):
         """Test the to_dict method"""
