@@ -2,19 +2,21 @@
 
 
 """
-    Console entry point
+    Cmd => command line interfaces
+    
+    Creating a command line interpreter instance from class Cmd
 """
-
 import cmd
 from models.base_model import BaseModel
-from models import storage
+from models.user import User
+from models import temp_storage
 
 
 class HBNBCommand(cmd.Cmd):
     """Command interpreter class for the HBNB project."""
 
     prompt = "(hbnb) "
-    classes = {"BaseModel": BaseModel}
+    classes = {"BaseModel": BaseModel, "User": User}
 
     def do_quit(self, arg):
         """Quit command to exit the program."""
@@ -26,7 +28,11 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def emptyline(self):
-        """Do nothing on empty input line."""
+        """
+        Overriding the emptyline method to disable the repetition of the last command
+        
+        Do nothing on empty input line.
+        """
         pass
 
     def do_create(self, arg):
@@ -54,7 +60,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        instance = storage.all().get(key)
+        instance = temp_storage.all().get(key)
         if not instance:
             print("** no instance found **")
             return
@@ -73,18 +79,19 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        if key not in storage.all():
+        if key not in temp_storage.all():
             print("** no instance found **")
             return
-        del storage.all()[key]
-        storage.save()
+        del temp_storage.all()[key]
+        temp_storage.save()
 
     def do_all(self, arg):
         """Print all string representation of all instances based or not on the class name."""
         if arg and arg not in self.classes:
             print("** class doesn't exist **")
             return
-        instances = storage.all()
+        
+        instances = temp_storage.all()
         result = []
         for key, value in instances.items():
             if not arg or key.startswith(arg):
@@ -104,7 +111,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        instance = storage.all().get(key)
+        instance = temp_storage.all().get(key)
         if not instance:
             print("** no instance found **")
             return

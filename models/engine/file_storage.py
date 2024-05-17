@@ -4,15 +4,17 @@
     File Storage
 """
 import json
+import models
+
 
 class FileStorage:
     """Class to handle serialization and deserialization of instances to/from a JSON file."""
 
-    __file_path = "file.json"
+    __file_path = "the_file.json"
     __objects = {}
 
     def all(self):
-        """Return the dictionary of all objects."""
+        """Return the dictionary of all saved objects."""
         return self.__objects
 
     def new(self, obj):
@@ -22,17 +24,17 @@ class FileStorage:
 
     def save(self):
         """Serialize objects to the JSON file."""
-        with open(self.__file_path, 'w') as f:
+        with open(self.__file_path, "w") as f:
             json.dump({key: obj.to_dict() for key, obj in self.__objects.items()}, f)
 
     def reload(self):
         """Deserialize the JSON file to objects, if it exists."""
         try:
-            with open(self.__file_path, 'r') as f:
-                objs = json.load(f)
-                for key, value in objs.items():
-                    cls_name = key.split('.')[0]
-                    cls = globals()[cls_name]
-                    self.__objects[key] = cls(**value)
-        except FileNotFoundError:
+            with open(FileStorage.__file_path, "r") as f:
+                obj_json = json.load(f)
+                for key, value in obj_json.items():
+                    class_name = value["__class__"]
+                    the_class = getattr(models, class_name)
+                    self.__objects[key] = the_class(**value)
+        except FileNotFoundError: #todo: maybe cause error
             pass

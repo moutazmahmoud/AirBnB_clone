@@ -6,7 +6,7 @@
 import uuid
 from datetime import datetime
 
-from models import storage
+import models
 
 
 class BaseModel:
@@ -17,6 +17,8 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """
         init method that initializes new instances and integrates with the FileStorage system.
+        
+        Using kwargs for deserialization of (key, value) pairs
         """
         if kwargs:
             for key, value in kwargs.items():
@@ -28,7 +30,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = self.created_at
-            storage.new(self)
+            models.temp_storage.new(self)
 
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
@@ -36,12 +38,12 @@ class BaseModel:
     def save(self):
         "Save changes"
         self.updated_at = datetime.now()
-        storage.save()
+        models.temp_storage.save()
 
     def to_dict(self):
         "Convert to dict"
-        dict_repr = self.__dict__.copy()
-        dict_repr["__class__"] = self.__class__.__name__
-        dict_repr["created_at"] = self.created_at.isoformat()
-        dict_repr["updated_at"] = self.updated_at.isoformat()
-        return dict_repr
+        dict_copy = self.__dict__.copy()
+        dict_copy["updated_at"] = self.updated_at.isoformat()
+        dict_copy["created_at"] = self.created_at.isoformat()
+        dict_copy["__class__"] = self.__class__.__name__
+        return dict_copy
