@@ -13,6 +13,7 @@ class TestFileStorage(unittest.TestCase):
     """
     Test File Storage
     """
+
     def setUp(self):
         self.storage = FileStorage()
 
