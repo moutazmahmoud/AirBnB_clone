@@ -17,10 +17,10 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """
-        init method that initializes new instances and integrates 
+        init method that initializes new instances and integrates
         with the FileStorage system.
-        
-        Using kwargs for deserialization of 
+
+        Using kwargs for deserialization of
         (key, value) pairs
         """
         if kwargs:
