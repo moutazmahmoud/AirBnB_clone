@@ -7,7 +7,6 @@
 import unittest
 from datetime import datetime
 from models import BaseModel
-from models import the_file_storage
 
 
 class TestBaseModel(unittest.TestCase):
