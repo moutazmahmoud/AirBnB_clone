@@ -120,7 +120,44 @@ class HBNBCommand(cmd.Cmd):
         class name and id by adding or updating attribute.
         """
         args = arg.split()
-        handle_update(self, args)
+        if not args:
+            print("** class name missing **")
+            return
+        if args[0] not in self.classes:
+            print("** class doesn't exist **")
+            return
+        if len(args) == 1:
+            print("** instance id missing **")
+            return
+        key = f"{args[0]}.{args[1]}"
+        instance = the_file_storage.all().get(key)
+        if not instance:
+            print("** no instance found **")
+            return
+        if len(args) == 2:
+            print("** attribute name missing **")
+            return
+        if len(args) == 3:
+            print("** value missing **")
+            return
+        attr_name = args[2]
+        attr_value = args[3].strip('"')
+        if hasattr(instance, attr_name):
+            attr_type = type(getattr(instance, attr_name))
+            try:
+                attr_value = attr_type(attr_value)
+            except ValueError:
+                print(f"** invalid value for {attr_name} **")
+                return
+            except TypeError:
+                print(f"** can't update {attr_name} **")
+                return
+        try:
+            setattr(instance, attr_name, attr_value)
+            instance.save()
+        except TypeError:
+            print("TypeError: check your args again please")
+            return
 
     def do_clear(self, arg):
         """
@@ -133,47 +170,3 @@ class HBNBCommand(cmd.Cmd):
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
-
-
-def handle_update(the_self, args):
-    """
-    Function to handle do_update method
-    """
-    if not args:
-        print("** class name missing **")
-        return
-    if args[0] not in the_self.classes:
-        print("** class doesn't exist **")
-        return
-    if len(args) == 1:
-        print("** instance id missing **")
-        return
-    key = f"{args[0]}.{args[1]}"
-    instance = the_file_storage.all().get(key)
-    if not instance:
-        print("** no instance found **")
-        return
-    if len(args) == 2:
-        print("** attribute name missing **")
-        return
-    if len(args) == 3:
-        print("** value missing **")
-        return
-    attr_name = args[2]
-    attr_value = args[3].strip('"')
-    if hasattr(instance, attr_name):
-        attr_type = type(getattr(instance, attr_name))
-        try:
-            attr_value = attr_type(attr_value)
-        except ValueError:
-            print(f"** invalid value for {attr_name} **")
-            return
-        except TypeError:
-            print(f"** can't update {attr_name} **")
-            return
-    try:
-        setattr(instance, attr_name, attr_value)
-        instance.save()
-    except TypeError:
-        print("TypeError: check your args again please")
-        return

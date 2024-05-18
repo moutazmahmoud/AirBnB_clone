@@ -8,7 +8,9 @@ import models
 
 
 class FileStorage:
-    """Class to handle serialization and deserialization of instances to/from a JSON file."""
+    """Class to handle serialization and
+    deserialization of instances to/from
+    a JSON file."""
 
     __file_path = "the_file.json"
     __objects = {}
@@ -28,7 +30,8 @@ class FileStorage:
             json.dump({key: obj.to_dict() for key, obj in self.__objects.items()}, f)
 
     def reload(self):
-        """Deserialize the JSON file to objects, if it exists."""
+        """Deserialize the JSON file to objects
+        , if it exists."""
         try:
             with open(self.__file_path, "r") as f:
                 obj_json = json.load(f)
@@ -36,5 +39,5 @@ class FileStorage:
                     class_name = value["__class__"]
                     the_class = getattr(models, class_name)
                     self.__objects[key] = the_class(**value)
-        except FileNotFoundError: #todo: revise this maybe cause error
+        except FileNotFoundError:  # todo: revise this maybe cause error
             pass

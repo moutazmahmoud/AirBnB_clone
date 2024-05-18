@@ -11,14 +11,17 @@ import models
 
 class BaseModel:
     """
-    Base class to take care of the initialization, serialization and deserialization.
+    Base class to take care of the initialization
+    , serialization and deserialization.
     """
 
     def __init__(self, *args, **kwargs):
         """
-        init method that initializes new instances and integrates with the FileStorage system.
+        init method that initializes new instances and integrates 
+        with the FileStorage system.
         
-        Using kwargs for deserialization of (key, value) pairs
+        Using kwargs for deserialization of 
+        (key, value) pairs
         """
         if kwargs:
             for key, value in kwargs.items():

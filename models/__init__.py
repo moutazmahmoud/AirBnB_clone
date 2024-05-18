@@ -13,6 +13,5 @@ from models.place import Place
 from models.review import Review
 
 
-
 the_file_storage = FileStorage()
 the_file_storage.reload()
