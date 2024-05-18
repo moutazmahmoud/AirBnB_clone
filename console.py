@@ -159,13 +159,13 @@ class HBNBCommand(cmd.Cmd):
             print("TypeError: check your args again please")
             return
 
-    def do_clear(self, arg):
-        """
-        Clear the console screen
+    # def do_clear(self, arg):
+    #     """
+    #     Clear the console screen
 
-        Not Required method for project
-        """
-        os.system("cls")
+    #     Not Required method for project
+    #     """
+    #     os.system("cls")
 
 
 if __name__ == "__main__":
