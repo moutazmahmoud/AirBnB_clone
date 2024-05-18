@@ -30,11 +30,11 @@ class FileStorage:
     def reload(self):
         """Deserialize the JSON file to objects, if it exists."""
         try:
-            with open(FileStorage.__file_path, "r") as f:
+            with open(self.__file_path, "r") as f:
                 obj_json = json.load(f)
                 for key, value in obj_json.items():
                     class_name = value["__class__"]
                     the_class = getattr(models, class_name)
                     self.__objects[key] = the_class(**value)
-        except FileNotFoundError: #todo: maybe cause error
+        except FileNotFoundError: #todo: revise this maybe cause error
             pass
