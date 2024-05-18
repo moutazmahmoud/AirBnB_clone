@@ -7,7 +7,6 @@
     Creating a command line interpreter instance from class Cmd
 """
 import cmd
-import os
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -44,10 +43,6 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """
         Overriding the emptyline method
-
-        to disable the repetition of the last command,
-
-        Do nothing on empty input line.
         """
 
     def do_create(self, arg):
@@ -101,8 +96,7 @@ class HBNBCommand(cmd.Cmd):
         the_file_storage.save()
 
     def do_all(self, arg):
-        """Print all string representation of all instances
-        based or not on the class name."""
+        """Print all string representation of all instances"""
         if arg and arg not in self.classes:
             print("** class doesn't exist **")
             return
@@ -115,10 +109,7 @@ class HBNBCommand(cmd.Cmd):
         print(result)
 
     def do_update(self, arg):
-        """
-        Update an instance based on the
-        class name and id by adding or updating attribute.
-        """
+        """Update an instance based on the class name and id."""
         args = arg.split()
         if not args:
             print("** class name missing **")
@@ -158,14 +149,6 @@ class HBNBCommand(cmd.Cmd):
         except TypeError:
             print("TypeError: check your args again please")
             return
-
-    # def do_clear(self, arg):
-    #     """
-    #     Clear the console screen
-
-    #     Not Required method for project
-    #     """
-    #     os.system("cls")
 
 
 if __name__ == "__main__":
