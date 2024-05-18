@@ -13,7 +13,7 @@ import models
 class HBNBCommand(cmd.Cmd):
     """Command interpreter class for the HBNB project."""
 
-    prompt = "(hbnb)"
+    prompt = "(hbnb) "
     classes = models
     def do_quit(self, _):
         """Quit command to exit the program."""
