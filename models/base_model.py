@@ -30,7 +30,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = self.created_at
-            models.temp_storage.new(self)
+            models.the_file_storage.new(self)
 
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
@@ -38,7 +38,7 @@ class BaseModel:
     def save(self):
         "Save changes"
         self.updated_at = datetime.now()
-        models.temp_storage.save()
+        models.the_file_storage.save()
 
     def to_dict(self):
         "Convert to dict"

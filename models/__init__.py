@@ -14,5 +14,5 @@ from models.review import Review
 
 
 
-temp_storage = FileStorage()
-temp_storage.reload()
+the_file_storage = FileStorage()
+the_file_storage.reload()

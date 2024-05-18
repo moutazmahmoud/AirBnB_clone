@@ -3,7 +3,7 @@
 
 """
     Cmd => command line interfaces
-    
+
     Creating a command line interpreter instance from class Cmd
 """
 import cmd
@@ -15,7 +15,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models import temp_storage
+from models import the_file_storage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -43,7 +43,9 @@ class HBNBCommand(cmd.Cmd):
 
     def emptyline(self):
         """
-        Overriding the emptyline method to disable the repetition of the last command
+        Overriding the emptyline method
+
+        to disable the repetition of the last command,
 
         Do nothing on empty input line.
         """
@@ -73,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        instance = temp_storage.all().get(key)
+        instance = the_file_storage.all().get(key)
         if not instance:
             print("** no instance found **")
             return
@@ -92,19 +94,20 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        if key not in temp_storage.all():
+        if key not in the_file_storage.all():
             print("** no instance found **")
             return
-        del temp_storage.all()[key]
-        temp_storage.save()
+        del the_file_storage.all()[key]
+        the_file_storage.save()
 
     def do_all(self, arg):
-        """Print all string representation of all instances based or not on the class name."""
+        """Print all string representation of all instances
+        based or not on the class name."""
         if arg and arg not in self.classes:
             print("** class doesn't exist **")
             return
 
-        instances = temp_storage.all()
+        instances = the_file_storage.all()
         result = []
         for key, value in instances.items():
             if not arg or key.startswith(arg):
@@ -112,7 +115,10 @@ class HBNBCommand(cmd.Cmd):
         print(result)
 
     def do_update(self, arg):
-        """Update an instance based on the class name and id by adding or updating attribute."""
+        """
+        Update an instance based on the
+        class name and id by adding or updating attribute.
+        """
         args = arg.split()
         handle_update(self, args)
 
@@ -143,7 +149,7 @@ def handle_update(the_self, args):
         print("** instance id missing **")
         return
     key = f"{args[0]}.{args[1]}"
-    instance = temp_storage.all().get(key)
+    instance = the_file_storage.all().get(key)
     if not instance:
         print("** no instance found **")
         return
