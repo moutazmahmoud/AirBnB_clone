@@ -48,7 +48,11 @@ class HBNBCommand(cmd.Cmd):
         """
         Overriding the emptyline method
         """
-        pass
+
+    def default(self, line):
+        """Override the default method to do nothing on empty or space-only input."""
+        if line.strip():
+            print(f"*** Unknown syntax: {line}")
 
     def do_create(self, arg):
         """Create a new instance of BaseModel, save it, and print the id."""
