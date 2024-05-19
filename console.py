@@ -6,158 +6,229 @@ Creating a command line interpreter instance from class Cmd
 
 
 import cmd
+import os
+import re
+from models import the_file_storage
 from models.base_model import BaseModel
 from models.user import User
+from models.place import Place
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
-from models.place import Place
 from models.review import Review
-from models import the_file_storage
-import models
+
+
+def parse_arguments(arg: str) -> list:
+    """Splits a string into tokens based on delimiters."""
+    return re.split(r"[ .(),]", arg)
 
 
 class HBNBCommand(cmd.Cmd):
-    """Command interpreter class for the HBNB project."""
+    """Defines the command interpreter for HBNB."""
 
     prompt = "(hbnb) "
-    classes = {
-        "BaseModel": BaseModel,
-        "User": User,
-        "State": State,
-        "City": City,
-        "Amenity": Amenity,
-        "Place": Place,
-        "Review": Review,
+    SUPPORTED_CLASSES = {
+        "BaseModel",
+        "User",
+        "State",
+        "City",
+        "Place",
+        "Amenity",
+        "Review",
     }
 
-    def do_quit(self, arg):
-        """Quit command to exit the program."""
+    def do_quit(self, arg: str) -> bool:
+        """Exit the program."""
         return True
 
-    def help_quit(self):
-        """Help information for the quit command."""
-        print("Quit command to exit the program")
-
-    def do_EOF(self, arg):
-        """EOF command to exit the program."""
-        print()  # Print a newline for better formatting
+    def do_EOF(self, arg: str) -> bool:
+        """Handle EOF to exit the program."""
+        print()
         return True
 
     def emptyline(self):
-        """
-        Overriding the emptyline method
-        """
+        """Override the emptyline method to do nothing."""
+        pass
 
-    def default(self, line):
-        """Override the default method to do nothing on empty or space-only input."""
-        if line.strip():
-            print(f"*** Unknown syntax: {line}")
+    def default(self, arg: str):
+        """Handle unrecognized commands."""
+        method_map = {
+            "all": self.do_all,
+            "show": self.do_show,
+            "destroy": self.do_destroy,
+            "count": self.do_count,
+            "update": self.do_update,
+        }
+        tokens = parse_arguments(arg)
+        if len(tokens) < 2:
+            print("*** Unknown syntax: {}".format(arg))
+            return
 
-    def do_create(self, arg):
-        """Create a new instance of BaseModel, save it, and print the id."""
+        class_name, action = tokens[0], tokens[1]
+        if action not in method_map:
+            print("*** Unknown syntax: {}".format(arg))
+            return
+
+        if action in ["all", "count"]:
+            method_map[action](class_name)
+        elif len(tokens) >= 3:
+            instance_id = tokens[2].strip('"')
+            if action == "show" or action == "destroy":
+                method_map[action]("{} {}".format(class_name, instance_id))
+            elif action == "update":
+                if len(tokens) == 4:
+                    attr_name = tokens[3].strip('"')
+                    method_map[action](
+                        "{} {} {}".format(class_name, instance_id, attr_name)
+                    )
+                elif len(tokens) > 4:
+                    attr_name = tokens[3].strip('"')
+                    attr_value = tokens[4].strip('"')
+                    method_map[action](
+                        "{} {} {} {}".format(
+                            class_name, instance_id, attr_name, attr_value
+                        )
+                    )
+        else:
+            print("*** Unknown syntax: {}".format(arg))
+
+    def do_create(self, arg: str):
+        """Create a new instance of a class."""
         if not arg:
             print("** class name missing **")
             return
-        if arg not in self.classes:
+
+        class_name = parse_arguments(arg)[0]
+        if class_name not in self.SUPPORTED_CLASSES:
             print("** class doesn't exist **")
             return
-        instance = self.classes[arg]()
+
+        instance = eval(class_name)()
         instance.save()
         print(instance.id)
 
-    def do_show(self, arg):
-        """Show an instance based on the class name and id."""
-        args = arg.split()
-        if not args:
+    def do_show(self, arg: str):
+        """Display the string representation of an instance."""
+        tokens = parse_arguments(arg)
+        if len(tokens) < 1:
             print("** class name missing **")
             return
-        if args[0] not in self.classes:
+
+        class_name = tokens[0]
+        if class_name not in self.SUPPORTED_CLASSES:
             print("** class doesn't exist **")
             return
-        if len(args) == 1:
+
+        if len(tokens) < 2:
             print("** instance id missing **")
             return
-        key = f"{args[0]}.{args[1]}"
-        instance = the_file_storage.all().get(key)
-        if not instance:
-            print("** no instance found **")
-            return
-        print(instance)
 
-    def do_destroy(self, arg):
-        """Delete an instance based on the class name and id."""
-        args = arg.split()
-        if not args:
+        instance_id = tokens[1]
+        key = "{}.{}".format(class_name, instance_id)
+        all_objs = the_file_storage.all()
+        if key not in all_objs:
+            print("** no instance found **")
+        else:
+            print(all_objs[key])
+
+    def do_destroy(self, arg: str):
+        """Delete an instance based on class name and id."""
+        tokens = parse_arguments(arg)
+        if len(tokens) < 1:
             print("** class name missing **")
             return
-        if args[0] not in self.classes:
+
+        class_name = tokens[0]
+        if class_name not in self.SUPPORTED_CLASSES:
             print("** class doesn't exist **")
             return
-        if len(args) == 1:
+
+        if len(tokens) < 2:
             print("** instance id missing **")
             return
-        key = f"{args[0]}.{args[1]}"
-        if key not in the_file_storage.all():
+
+        instance_id = tokens[1]
+        key = "{}.{}".format(class_name, instance_id)
+        all_objs = the_file_storage.all()
+        if key in all_objs:
+            del all_objs[key]
+            the_file_storage.save()
+        else:
             print("** no instance found **")
-            return
-        del the_file_storage.all()[key]
-        the_file_storage.save()
 
-    def do_all(self, arg):
-        """Print all string representation of all instances"""
-        if arg and arg not in self.classes:
-            print("** class doesn't exist **")
-            return
+    def do_all(self, arg: str):
+        """Print all string representations of all instances."""
+        tokens = parse_arguments(arg)
+        all_objs = the_file_storage.all()
+        if len(tokens) == 0:
+            print([str(obj) for obj in all_objs.values()])
+        else:
+            class_name = tokens[0]
+            if class_name in self.SUPPORTED_CLASSES:
+                print([str(obj) for key, obj in all_objs.items() if key.startswith(class_name)])
+            else:
+                print("** class doesn't exist **")
 
-        instances = the_file_storage.all()
-        result = []
-        for key, value in instances.items():
-            if not arg or key.startswith(arg):
-                result.append(str(value))
-        print(result)
-
-    def do_update(self, arg):
-        """Update an instance based on the class name and id."""
-        args = arg.split()
-        if not args:
+    def do_update(self, arg: str):
+        """Update an instance by adding or updating an attribute."""
+        tokens = parse_arguments(arg)
+        if len(tokens) < 1:
             print("** class name missing **")
             return
-        if args[0] not in self.classes:
+
+        class_name = tokens[0]
+        if class_name not in self.SUPPORTED_CLASSES:
             print("** class doesn't exist **")
             return
-        if len(args) == 1:
+
+        if len(tokens) < 2:
             print("** instance id missing **")
             return
-        key = f"{args[0]}.{args[1]}"
-        instance = the_file_storage.all().get(key)
-        if not instance:
+
+        instance_id = tokens[1]
+        key = "{}.{}".format(class_name, instance_id)
+        all_objs = the_file_storage.all()
+        if key not in all_objs:
             print("** no instance found **")
             return
-        if len(args) == 2:
+
+        if len(tokens) < 3:
             print("** attribute name missing **")
             return
-        if len(args) == 3:
+
+        if len(tokens) < 4:
             print("** value missing **")
             return
-        attr_name = args[2]
-        attr_value = args[3].strip('"')
-        if hasattr(instance, attr_name):
-            attr_type = type(getattr(instance, attr_name))
-            try:
-                attr_value = attr_type(attr_value)
-            except ValueError:
-                print(f"** invalid value for {attr_name} **")
-                return
-            except TypeError:
-                print(f"** can't update {attr_name} **")
-                return
-        try:
-            setattr(instance, attr_name, attr_value)
-            instance.save()
-        except TypeError:
-            print("TypeError: check your args again please")
-            return
+
+        obj = all_objs[key]
+        attr_name = tokens[2]
+        attr_value = tokens[3]
+
+        if hasattr(obj, attr_name):
+            attr_type = type(getattr(obj, attr_name))
+            setattr(obj, attr_name, attr_type(attr_value))
+        else:
+            setattr(obj, attr_name, attr_value)
+        obj.save()
+
+    def do_count(self, arg: str):
+        """Count the number of instances of a class."""
+        tokens = parse_arguments(arg)
+        if tokens[0] in self.SUPPORTED_CLASSES:
+            class_name = tokens[0]
+            count = sum(
+                1 for key in the_file_storage.all().keys() if key.startswith(class_name)
+            )
+            print(count)
+        else:
+            print("** class doesn't exist **")
+
+    def do_clear(self, arg: str):
+        """Clear the console screen."""
+        if os.name == "nt":
+            os.system("cls")
+        else:
+            os.system("clear")
 
 
 if __name__ == "__main__":
