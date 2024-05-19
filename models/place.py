@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-    Place class
+    Place class ss
 """
 
 from models.base_model import BaseModel
