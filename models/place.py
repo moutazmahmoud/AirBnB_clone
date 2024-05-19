@@ -8,7 +8,7 @@ from models.base_model import BaseModel
 
 class Place(BaseModel):
     """
-    Place class that inherits from Base Model asa
+    Place class that inherits from Base Model
     """
 
     city_id = ""
