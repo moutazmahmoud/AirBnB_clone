@@ -8,7 +8,7 @@ from models.base_model import BaseModel
 
 class User(BaseModel):
     """
-    User class that inherits from Base Model
+    User class that inherits from Base Model ss
     """
 
     email = ""
