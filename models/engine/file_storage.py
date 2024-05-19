@@ -4,7 +4,14 @@
     File Storage
 """
 import json
-import models
+
+from models.review import Review
+from models.city import City
+from models.amenity import Amenity
+from models.state import State
+from models.place import Place
+from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -17,28 +24,29 @@ class FileStorage:
 
     def all(self):
         """Return the dictionary of all saved objects."""
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         """Add a new object to the storage dictionary."""
         key = f"{obj.__class__.__name__}.{obj.id}"
-        self.__objects[key] = obj
+        FileStorage.__objects[key] = obj
 
     def save(self):
-        """Serialize objects to the JSON file."""
-        with open(self.__file_path, "w") as f:
-            json.dump({key: obj.to_dict() for key,
-                       obj in self.__objects.items()}, f)
+        """Serialize __objects to the JSON file __file_path."""
+        odict = FileStorage.__objects
+        objdict = {key: obj.to_dict() for key, obj in odict.items()}
+        with open(FileStorage.__file_path, "w") as f:
+            json.dump(objdict, f)
 
     def reload(self):
-        """Deserialize the JSON file to objects
-        , if it exists."""
+        """Deserialize the JSON file __file_path to __objects, if it exists."""
         try:
-            with open(self.__file_path, "r") as f:
-                obj_json = json.load(f)
-                for key, value in obj_json.items():
-                    class_name = value["__class__"]
-                    the_class = getattr(models, class_name)
-                    self.__objects[key] = the_class(**value)
-        except FileNotFoundError:  # todo: revise this maybe cause error
-            pass
+            with open(FileStorage.__file_path) as f:
+                objs_dict = json.load(f)
+                for key, option in objs_dict.items():
+                    class_name = option["__class__"]
+                    del option["__class__"]
+                    obj = eval(class_name)(**option)
+                    FileStorage.__objects[key] = obj
+        except FileNotFoundError:
+            return
