@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 
-
 """
-    Cmd => command line interfaces
-
-    Creating a command line interpreter instance from class Cmd
+Creating a command line interpreter instance from class Cmd
 """
+
+
 import cmd
 from models.base_model import BaseModel
 from models.user import User
@@ -15,6 +14,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from models import the_file_storage
+import models
 
 
 class HBNBCommand(cmd.Cmd):
@@ -31,11 +31,11 @@ class HBNBCommand(cmd.Cmd):
         "Review": Review,
     }
 
-    def do_quit(self, _):
+    def do_quit(self, arg):
         """Quit command to exit the program."""
         return True
 
-    def do_EOF(self, _):
+    def do_EOF(self, arg):
         """EOF command to exit the program."""
         print()  # Print a newline for better formatting
         return True
