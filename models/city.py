@@ -13,4 +13,3 @@ class City(BaseModel):
 
     name = ""
     state_id = ""
-#test
