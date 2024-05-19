@@ -9,7 +9,7 @@ class TestAmenity(unittest.TestCase):
     """Tests for Amenity class"""
 
     def test_attributes(self):
-        """Test place attributes"""
+        """Test place attributesss"""
         amenity = Amenity()
         self.assertEqual(amenity.name, "")
 
