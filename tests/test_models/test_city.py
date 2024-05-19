@@ -2,10 +2,9 @@
 """Unit tests for the city module."""
 import os
 import unittest
-from models.engine.file_storage import FileStorage
-from models import storage
-from models.city import City
 from datetime import datetime
+from models.engine.file_storage import FileStorage
+from models.city import City
 
 c1 = City()
 c2 = City(**c1.to_dict())
@@ -26,7 +25,7 @@ class TestCity(unittest.TestCase):
 
     def test_params(self):
         """Test method for class attributes"""
-        k = f"{type(c1).__name__}.{c1.id}"
+        # k = f"{type(c1).__name__}.{c1.id}"
         self.assertIsInstance(c1.name, str)
         self.assertEqual(c3.name, "")
         c1.name = "Abuja"
