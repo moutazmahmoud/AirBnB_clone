@@ -155,6 +155,18 @@ class HBNBCommand(cmd.Cmd):
             print("TypeError: check your args again please")
             return
 
+    def default(self, line):
+        """Default method to handle unknown commands."""
+        args = line.split(".")
+        if len(args) == 2 and args[1] == "all()":
+            class_name = args[0]
+            if class_name in self.classes:
+                self.do_all(class_name)
+            else:
+                print("** class doesn't exist **")
+        else:
+            print(f"*** Unknown syntax: {line}")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
