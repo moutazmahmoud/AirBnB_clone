@@ -48,7 +48,7 @@ class TestBaseModel(unittest.TestCase):
         """Test the __str__ method"""
         self.assertEqual(
              str(self.model),
-            f"[BaseModel] ({self.model.id}) {self.model.__dict__}"
+             f"[BaseModel] ({self.model.id}) {self.model.__dict__}"
         )
 
     def test__save(self):
