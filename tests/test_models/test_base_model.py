@@ -47,12 +47,14 @@ class TestBaseModel(unittest.TestCase):
     def test_str(self):
         """Test the __str__ method"""
         self.assertEqual(
-            str(self.model), f"[BaseModel] ({self.model.id}) {self.model.__dict__}"
+             str(self.model),
+            f"[BaseModel] ({self.model.id}) {self.model.__dict__}"
         )
 
     def test__save(self):
         """
-        Test that the 'updated_at' attribute updates after calling the 'save()' method.
+        Test that the 'updated_at' attribute updates
+        after calling the 'save()' method.
         """
         # Create a new instanceument instance
         instance = BaseModel()
@@ -74,8 +76,10 @@ class TestBaseModel(unittest.TestCase):
         model_dict = self.model.to_dict()
         self.assertEqual(model_dict["id"], self.model.id)
         self.assertEqual(model_dict["__class__"], "BaseModel")
-        self.assertEqual(model_dict["created_at"], self.model.created_at.isoformat())
-        self.assertEqual(model_dict["updated_at"], self.model.updated_at.isoformat())
+        self.assertEqual(model_dict["created_at"],
+                         self.model.created_at.isoformat())
+        self.assertEqual(model_dict["updated_at"],
+                         self.model.updated_at.isoformat())
         self.assertIsInstance(model_dict, dict)
 
 
