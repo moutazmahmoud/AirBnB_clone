@@ -4,7 +4,7 @@
 Creating a command line interpreter instance from class Cmd
 """
 
-
+import json
 import cmd
 from models.base_model import BaseModel
 from models.user import User
@@ -185,6 +185,56 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     print("** class doesn't exist **")
                 return
+
+            if command.startswith("show(") and command.endswith(")"):
+                instance_id = command[5:-1].strip('"')
+                if class_name in self.classes:
+                    self.do_show(f"{class_name} {instance_id}")
+                else:
+                    print("** class doesn't exist **")
+                return
+
+            if command.startswith("destroy(") and command.endswith(")"):
+                instance_id = command[8:-1].strip('"')
+                if class_name in self.classes:
+                    self.do_destroy(f"{class_name} {instance_id}")
+                else:
+                    print("** class doesn't exist **")
+                return
+
+            if command.startswith("update(") and command.endswith(")"):
+                update_args = command[7:-1].split(", ", 1)
+                if len(update_args) == 2:
+                    instance_id = update_args[0].strip('"')
+                    attr_data = update_args[1]
+
+                    if attr_data.startswith("{") and attr_data.endswith("}"):
+                        try:
+                            attr_dict = json.loads(attr_data.replace("'", '"'))
+                            if isinstance(attr_dict, dict):
+                                if class_name in self.classes:
+                                    for attr_name, attr_value in attr_dict.items():
+                                        self.do_update(
+                                            f"{class_name} {instance_id} {attr_name} {attr_value}"
+                                        )
+                                else:
+                                    print("** class doesn't exist **")
+                            else:
+                                print("** invalid dictionary **")
+                        except json.JSONDecodeError:
+                            print("** invalid dictionary **")
+                    else:
+                        update_args = attr_data.split(", ")
+                        if len(update_args) == 2:
+                            attr_name = update_args[0].strip('"')
+                            attr_value = update_args[1].strip('"')
+                            if class_name in self.classes:
+                                self.do_update(
+                                    f"{class_name} {instance_id} {attr_name} {attr_value}"
+                                )
+                            else:
+                                print("** class doesn't exist **")
+                    return
 
         print(f"*** Unknown syntax: {line}")
 
