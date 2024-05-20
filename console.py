@@ -215,7 +215,8 @@ class HBNBCommand(cmd.Cmd):
                                 if class_name in self.classes:
                                     for attr_name, attr_value in attr_dict.items():
                                         self.do_update(
-                                            f"{class_name} {instance_id} {attr_name} {attr_value}"
+                                            f"""{class_name} {instance_id} 
+                                            {attr_name} {attr_value}"""
                                         )
                                 else:
                                     print("** class doesn't exist **")
@@ -230,7 +231,8 @@ class HBNBCommand(cmd.Cmd):
                             attr_value = update_args[1].strip('"')
                             if class_name in self.classes:
                                 self.do_update(
-                                    f"{class_name} {instance_id} {attr_name} {attr_value}"
+                                    f"""{class_name} {instance_id} 
+                                    {attr_name} {attr_value}"""
                                 )
                             else:
                                 print("** class doesn't exist **")
