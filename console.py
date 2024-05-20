@@ -155,17 +155,38 @@ class HBNBCommand(cmd.Cmd):
             print("TypeError: check your args again please")
             return
 
+    def do_count(self, class_name):
+        """Count the number of instances of a class."""
+        if class_name not in self.classes:
+            print("** class doesn't exist **")
+            return
+
+        instances = storage.all()
+        count = sum(1 for key in instances if key.startswith(class_name))
+        print(count)
+
     def default(self, line):
         """Default method to handle unknown commands."""
         args = line.split(".")
-        if len(args) == 2 and args[1] == "all()":
+        if len(args) == 2:
             class_name = args[0]
-            if class_name in self.classes:
-                self.do_all(class_name)
-            else:
-                print("** class doesn't exist **")
-        else:
-            print(f"*** Unknown syntax: {line}")
+            command = args[1]
+
+            if command == "all()":
+                if class_name in self.classes:
+                    self.do_all(class_name)
+                else:
+                    print("** class doesn't exist **")
+                return
+
+            if command == "count()":
+                if class_name in self.classes:
+                    self.do_count(class_name)
+                else:
+                    print("** class doesn't exist **")
+                return
+
+        print(f"*** Unknown syntax: {line}")
 
 
 if __name__ == "__main__":
