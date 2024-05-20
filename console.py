@@ -13,7 +13,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models import the_file_storage
+from models import storage
 import models
 
 
@@ -75,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        instance = the_file_storage.all().get(key)
+        instance = storage.all().get(key)
         if not instance:
             print("** no instance found **")
             return
@@ -94,11 +94,11 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        if key not in the_file_storage.all():
+        if key not in storage.all():
             print("** no instance found **")
             return
-        del the_file_storage.all()[key]
-        the_file_storage.save()
+        del storage.all()[key]
+        storage.save()
 
     def do_all(self, arg):
         """Print all string representation of all instances"""
@@ -106,7 +106,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
-        instances = the_file_storage.all()
+        instances = storage.all()
         result = []
         for key, value in instances.items():
             if not arg or key.startswith(arg):
@@ -126,7 +126,7 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
         key = f"{args[0]}.{args[1]}"
-        instance = the_file_storage.all().get(key)
+        instance = storage.all().get(key)
         if not instance:
             print("** no instance found **")
             return
